@@ -1,0 +1,49 @@
+<!-- a page of detailed information for each todolist -->
+{% extends "base.html" %}
+
+{% block title %}ToDoList-Detail{% endblock %}
+
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/detail.css') }}">
+  <script src="{{ url_for('static',filename='js/todolist.js') }}"></script>
+{% endblock %}
+
+
+{% block body %}
+  {% for todolist in todolists %}
+    <!-- get the specific id list -->
+    {% if todolist.id == todolist_id %}
+      <div class="row" style="margin-top: 20px;">
+        <div class="col"></div>
+        <div class="col-8" style="background-color: #fff; padding: 20px;">
+          <h3 class="page-title">{{ todolist.assessment_title }}</h3>
+          <p class="todolist-info">
+            <span>Module: {{ todolist.module }}</span><br/><br/>
+            <span>Creator: {{ todolist.author.username }}</span><br/><br/>
+            <!-- different effects for different status -->
+            {% if todolist.status == "Uncompleted" %}
+              <span style="color: rgb(255, 191, 0);"><b>Statu: {{ todolist.status }}</b></span><br/><br/>
+            {% elif todolist.status == "Completed" %}
+              <span style="color: rgb(13, 162, 0);"><b>Statu: {{ todolist.status }}</b></span><br/><br/>
+            {% endif %}
+            <span style="color: rgb(130, 32, 32)"><b>Deadline Date: {{ todolist.deadline }}</b></span><br/>
+
+            <!-- h1 for holding the timer of the list, combined with script function -->
+            <span style="color: rgb(191, 38, 38)"><b id="h1"></b></span>
+          </p>
+          <hr>
+          <p class="todolist-content">{{ todolist.description }}</p>
+          <hr>
+        </div>
+        <div class="col"></div>
+      </div>
+      <script>
+        window.onload = function starttime(){
+          time(h1,'{{ todolist.deadline }}');     // remaining time to deadline
+          ptimer = setTimeout(starttime, 1000);   // add a timer
+        }
+      </script>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

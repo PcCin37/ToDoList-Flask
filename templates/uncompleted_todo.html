@@ -1,0 +1,136 @@
+<!-- a page for showing uncompleted todolists -->
+{% extends "base.html" %}
+
+{% block title %}ToDoList-Uncompleted{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/index_add.css') }}">
+{% endblock %}
+
+{% block body %}
+  <div class="row" style="margin-top: 20px;">
+    <div class="col medium-4 columns" style="margin-top: 20px;">
+
+      <div class="accordion" id="accordionExample">
+
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <h2 class="mb-0">
+              <a role="button" class="btn btn-link collapsed" type="button" href="{{ url_for('todo.important') }}">
+                Important
+              </a>
+            </h2>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="headingTwo">
+            <h2 class="mb-0">
+              <button class="btn collapsed" type="button" data-toggle="collapse"
+                      data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Categories
+              </button>
+            </h2>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+            <div class="card-body">
+              <div>
+                <!-- judge if the module is in the categories list, if not add a new category -->
+                {% set i = namespace(value="") %}
+                {% for list in todolists %}
+                  {% set j = list.module %}
+                  {% if i.value != j %}
+                    <a class="dropdown-item" href="/category/{{ list.module }}">{{ list.module }}</a>
+                    {% set i.value = list.module %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header" id="headingThree">
+            <h2 class="mb-0">
+              <button class="btn collapsed" type="button" data-toggle="collapse"
+                      data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Status
+              </button>
+            </h2>
+          </div>
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+            <div class="card-body">
+              <div>
+                <a class="dropdown-item" href="{{ url_for('todo.completed') }}">Completed</a>
+                <a class="dropdown-item" href="{{ url_for('todo.uncompleted') }}">Uncompleted</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+    <div class="col-8">
+      <ul class="todolist-ul">
+        {% for uncompleted_todolist in todolists %}
+        <!-- judge if todolist.status is the Uncompleted, if yes show them off -->
+          {% if uncompleted_todolist.status == "Uncompleted" %}
+            <li>
+              <div class="todolist-main">
+                <div class="todolist-title">
+                  <a href="{{ url_for('todo.todolist_detail',todolist_id=uncompleted_todolist.id) }}">
+                    {{ uncompleted_todolist.assessment_title }}
+                  </a>
+                </div>
+                <div class="todolist-content">{{ uncompleted_todolist.description }}</div>
+
+                <!-- if the status of the list is completed, if yes show the completed status effects -->
+                {% if uncompleted_todolist.status == "Completed" %}
+                  <div class="todolist-status">
+                    <a role="button" class="btn btn-success status"
+                       href="/uncompleted/{{ uncompleted_todolist.id }}">
+                      {{ uncompleted_todolist.status }}</a>
+                  </div>
+                <!-- if not show uncompleted status effects -->
+                {% elif uncompleted_todolist.status == "Uncompleted" %}
+                  <div class="todolist-status">
+                    <a role="button" class="btn btn-warning status"
+                            href="/uncompleted/{{ uncompleted_todolist.id }}">
+                      {{ uncompleted_todolist.status }}</a>
+                  </div>
+                {% endif %}
+
+                <div class="todolist-detail">
+                  <!-- if the importance of the list is important, if yes show the filled star effects -->
+                  {% if uncompleted_todolist.importance == "important" %}
+                    <a class="btn todolist-edit" href="/uncompleted/change_imp/{{ uncompleted_todolist.id }}">
+                      <img src="/static/image/important.svg" width="30" height="30"
+                           class="d-inline-block align-top" alt="">
+                    </a>
+                  <!-- if not, show unfilled star effects -->
+                  {% elif uncompleted_todolist.importance == "none" %}
+                    <a class="btn todolist-edit" href="/uncompleted/change_imp/{{ uncompleted_todolist.id }}">
+                      <img src="/static/image/unimportant.svg" width="30" height="30"
+                           class="d-inline-block align-top" alt="">
+                    </a>
+                  {% endif %}
+                  <a class="btn todolist-edit"
+                     href="{{ url_for('todo.delete_todo',todolist_id=uncompleted_todolist.id) }}">
+                    <img src="/static/image/edit.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                  </a>
+                  <a class="btn todolist-delete"
+                     href="{{ url_for('todo.delete_todo',todolist_id=uncompleted_todolist.id) }}">
+                    <img src="/static/image/delete.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                  </a>
+                  <span class="todolist-time">Deadline: {{ uncompleted_todolist.deadline }}</span>
+                </div>
+              </div>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col"></div>
+  </div>
+{% endblock %}

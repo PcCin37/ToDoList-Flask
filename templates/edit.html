@@ -1,0 +1,84 @@
+ <!-- a page for editing todolist, the most similar to add_newTodo.html -->
+{% extends "base.html" %}
+
+{% block title %}ToDoList-Edit{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-datetimepicker.min.css') }}">
+  <script type="text/javascript"
+          src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
+  <script src="{{ url_for('static',filename='js/bootstrap-datetimepicker.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/custom_datetimepicker.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+  <div class="row" style="margin-top: 20px;">
+    <div class="col"></div>
+      <div class="col-8">
+        <h1 style="text-align: center;">Edit ToDo</h1>
+        <form action="{{ url_for('todo.edit_todo', todolist_id=todolist.id) }}" method="post">
+          <div class="form-group">
+            <input type="text" name="assessment_title" class="form-control" value="{{ todolist.assessment_title }}">
+          </div>
+
+          <div class="form-group">
+            <input type="text" name="module" class="form-control" value="{{ todolist.module }}">
+          </div>
+
+          <div class="form-group">
+            <div class="input-group date" id="id_1">
+              <input type="text" class="form-control" name="deadline" value="{{ todolist.deadline }}">
+              <div class="input-group-addon input-group-append">
+                <div class="input-group-text">
+                  <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Important</label>
+              </div>
+              <select name="importance" class="custom-select" id="inputGroupSelect01">
+                <option selected>{{ todolist.importance }}</option>
+                <option value="important">Yes</option>
+                <option value="none">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">ToDoList Status</label>
+              </div>
+              <select name="status" class="custom-select" id="inputGroupSelect02">
+                <option selected>{{ todolist.status }}</option>
+                <option value="Uncompleted">Uncompleted</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <textarea name="description" class="form-control" rows="10"
+                      placeholder="Add a short Description">{{ todolist.description }}</textarea>
+          </div>
+
+          {% for message in get_flashed_messages() %}
+            <div class="form-group">
+              <div class="text-danger">{{ message }}</div>
+            </div>
+          {% endfor %}
+
+          <div class="form-group" style="text-align: right;">
+            <button class="btn btn-success">Save</button>
+          </div>
+        </form>
+      </div>
+    <div class="col"></div>
+  </div>
+{% endblock %}
